@@ -21,7 +21,7 @@
 	    			<tr th:each="currentProject : ${projects}">
 	      				<th scope="row" th:text="${currentProject.projectId}" />
 	      				<td th:text="${currentProject.projectName}" />
-	      				<td th:text="${currentProject.teamMember.firstName} + ' ' + ${currentProject.teamMember.lastName}" />
+	      				<td><span th:if="${currentProject.teamMember != null}" th:text="${currentProject.teamMember.firstName} + ' ' + ${currentProject.teamMember.lastName}"></span></td>
 	      				<td th:text="${currentProject.dateCreated}" />
 	      				<td><a class="btn btn-primary" role="button" data-html="true" 
 	      				data-toggle="popover" th:attr="title=${currentProject.projectName}, data-content='<b>Priority:</b> ' + ${currentProject.priority} +  '<br /> <b>Description:</b> ' + ${currentProject.description}">Details</a></td>

@@ -11,14 +11,16 @@
 				 <thead>
 				    <tr>
 				    	<th scope="col">Team Member Name</th>
+				    	<th scope="col">Team Member Email</th>
 				    	<th scope="col"><a class="btn btn-primary" role="button" href="/addteammember">Add Team Member</a></th>
 				    </tr>
 				 </thead>
 				 <tbody>
 	    			<tr th:each="teamMember : ${team_members}">
 	      				<td th:text="${teamMember.firstName} + ' ' + ${teamMember.lastName}" />
+	      				<td th:text="${teamMember.User.getEmail()}" />
 	      				<td><a class="btn btn-primary" role="button" th:href="@{/change_team_member_name/{id}(id=${teamMember.memberId})}">Change Name</a></td>
-	      				<td><a class="btn btn-primary" role="button" th:href="@{/change_email_password/{id}(id=${teamMember.user.getUserId()})}">Change Email/Password</a></td>
+	      				<td><a class="btn btn-primary" role="button" th:href="@{/change_email_password/{id}/{account}(id=${teamMember.user.getUserId()}, account='member')}">Change Email/Password</a></td>
 	      				<td><a class="btn btn-primary" role="button" th:href="@{/delete_team_member/{id}(id=${teamMember.memberId})}">Delete</a></td>
 	    			</tr>
 	    		</tbody>

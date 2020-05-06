@@ -13,7 +13,7 @@
 	        <h1>Project Management Assistant</h1>
 	        
 	        <ul class="nav justify-content-center" sec:authorize="isAuthenticated()">
-			  <li class="nav-item">
+			  <li class="nav-item font-weight-bold">
 			    Signed in as: <span th:text="${yourAccount.firstName} + ' ' + ${yourAccount.lastName}"></span>
 			  </li>
 			  <li class="nav-item">
@@ -26,7 +26,7 @@
 			    <a class="nav-link" th:href="@{/change_team_manager_name/{id}(id=${yourAccount.managerId})}">Change your name</a>
 			  </li>
 			  <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
-			    <a class="nav-link" th:href="@{/change_email_password/{id}(id=${yourAccount.user.getUserId()})}">Change your email/password</a>
+			    <a class="nav-link" th:href="@{/change_email_password/{id}/{account}(id=${yourAccount.user.getUserId()}, account='manager')}">Change your email/password</a>
 			  </li>
 			  <li class="nav-item">
 			    <a class="nav-link" href="/logout">Logout</a>

@@ -21,7 +21,7 @@
 				<option value="High">High</option>
 			</select>
 			<div class="col alert alert-danger" th:each="error: ${#fields.errors('priority')}" th:text="${error}">Validation error</div>
-			<select class="form-control last-fld" th:field="*{teamMember}" required>
+			<select class="form-control last-fld" th:field="*{teamMember}">
 				<option value="">Who will manage this project</option>
 				<option th:each="currentOwner: ${team_members}" 
 					th:value="${currentOwner.memberId}"

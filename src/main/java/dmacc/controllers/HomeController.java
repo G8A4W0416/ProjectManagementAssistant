@@ -44,7 +44,6 @@ public class HomeController {
 	@Autowired
 	private TeamMemberRepository tMemberRepo;
 	
-	
 	@Autowired
 	ProjectRepository projectRepo;
 	
@@ -184,29 +183,44 @@ public class HomeController {
         return new ChangeEmailPasswordDto();
     }
 	
-	@GetMapping("/change_email_password/{id}")
-	public String showChangeEmailPassword(@ModelAttribute("User") ChangeEmailPasswordDto changeEmailPasswordDto, @PathVariable("id") long id, Model model) {
+	@GetMapping("/change_email_password/{id}/{account}")
+	public String showChangeEmailPassword(@ModelAttribute("User") ChangeEmailPasswordDto changeEmailPasswordDto, @PathVariable("id") long id, @PathVariable("account") String account, Model model) {
 		model.addAttribute("yourAccount", getLoggedInUser());
-		Users user = userRepo.findById(id).orElse(null);
+		Users user = userRepo.findById(id).orElse(null);		
 		changeEmailPasswordDto.setUserId(user.getUserId());
 		changeEmailPasswordDto.setEmail(user.getEmail());
+		if (account.equals("member")) {
+			TeamMember teamMember = tMemberRepo.findByUser(user);
+			model.addAttribute(teamMember);
+		}
+		
 		return "change_email_password";
 	}
 	
 	@Resource(name="authenticationManager")
     private AuthenticationManager authManager;
 	
-	@PostMapping("/changeEmailPassword/{id}")
-	public String changeEmailPassword(@ModelAttribute("User") @Valid ChangeEmailPasswordDto changeEmailPasswordDto, BindingResult result, @PathVariable("id") long id, Model model) {
+	@PostMapping("/changeEmailPassword/{id}/{account}")
+	public String changeEmailPassword(@ModelAttribute("User") @Valid ChangeEmailPasswordDto changeEmailPasswordDto, BindingResult result, @PathVariable("id") long id, @PathVariable("account") String account, Model model) {
 		Users user = userRepo.findById(id).orElse(null);
 		Users existing = userService.findByEmail(changeEmailPasswordDto.getEmail());
+		
+		String redirect;
+		
+		if (account.equals("member")) {
+			TeamMember teamMember = tMemberRepo.findByUser(user);
+			model.addAttribute(teamMember);
+			redirect = "redirect:/manage_team_members";
+		} else {
+			redirect = "redirect:/projectdashboard";
+		}
 		
         if (existing != null && !user.getEmail().equals(changeEmailPasswordDto.getEmail())) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
         
 		if (result.hasErrors()) {
-			return showChangeEmailPassword(changeEmailPasswordDto, id, model);
+			return showChangeEmailPassword(changeEmailPasswordDto, id, account, model);
         }
 		
 		changeEmailPasswordDto.setUserId(id);
@@ -223,10 +237,9 @@ public class HomeController {
 		     
 		    SecurityContext sc = SecurityContextHolder.getContext();
 		    sc.setAuthentication(auth);
-
 	   	}
 		
-		return "redirect:/projectdashboard";
+		return redirect;
 	}
 	
 	@GetMapping("/projectdashboard")
@@ -237,7 +250,7 @@ public class HomeController {
 	    TeamMember teamMember = tMemberRepo.findByUser(userService.findByEmail(email));
 	    model.addAttribute("yourAccount", (teamManager != null) ? teamManager : teamMember);
 	    model.addAttribute("team_members", tMemberRepo.findByTeamManager(teamManager));
-	    model.addAttribute("projects", (teamManager != null) ? projectRepo.findByTeamManager(teamManager) : projectRepo.findByTeamMember(teamMember));
+	    model.addAttribute("projects", (teamManager != null) ? projectRepo.findByTeamManager(teamManager) : projectRepo.findByTeamManager(teamMember.getTeamManager()));
 		return "projectdashboard";
 	}
 }

@@ -6,6 +6,7 @@
 </head>
 <body>
 	<section layout:fragment="custom-content">
+		<h2>Team Member</h2>
 		<form th:action="@{/updateTeamMemberName}" th:object="${TeamMember}" method="post">
 			<input type="hidden" th:field="*{memberId}"/>
 			<input type="hidden" th:field="*{user}"/>
